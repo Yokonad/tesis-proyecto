@@ -5,9 +5,7 @@
   <p><b>Repositorio Oficial del Proyecto de Investigación y Desarrollo en Laravel</b></p>
 
   <img src="https://media.giphy.com/media/L1R1tvI9svkIWwpVYr/giphy.gif" width="250" alt="Laptop Animado" />
-
-  <br><br>
-
+<br>
   <img src="https://img.shields.io/badge/Backend-6c5ce7?style=for-the-badge&logoColor=white" />
   <img src="https://img.shields.io/badge/Arquitectura_Limpia-00b894?style=for-the-badge&logoColor=white" />
   <img src="https://img.shields.io/badge/Laravel-FF2D20?style=for-the-badge&logo=laravel&logoColor=white" />
