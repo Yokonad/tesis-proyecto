@@ -13,8 +13,7 @@
   <img src="https://img.shields.io/badge/PHP-777BB4?style=for-the-badge&logo=php&logoColor=white" />
   <img src="https://img.shields.io/badge/UI_UX-e84393?style=for-the-badge&logoColor=white" />
 
-  <br><br>
-  
+  <br>
   <i>Este repositorio contiene el código fuente desarrollado para cumplir con los requisitos académicos y funcionales del proyecto de grado. La arquitectura del sistema está respaldada por metodologías ágiles y patrones de diseño modernos.</i>
 
 </div>
