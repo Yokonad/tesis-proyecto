@@ -1,0 +1,46 @@
+@import 'tailwindcss';
+
+@source '../**/*.tsx';
+
+body {
+  font-family: 'Inter', sans-serif;
+  margin: 0;
+  background-color: #0a0a0a;
+  /* Fondo minimalista tipo consola de comandos (grid de puntos) */
+  background-image: radial-gradient(circle, rgba(234, 88, 12, 0.3) 1px, transparent 1px);
+  background-size: 24px 24px;
+  color: #fb923c;
+  min-height: 100vh;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.card-minimal {
+  background: rgba(10, 10, 10, 0.8);
+  border: 1px solid rgba(234, 88, 12, 0.4);
+  padding: 4rem;
+  border-radius: 4px;
+  text-align: center;
+  backdrop-filter: blur(8px);
+  box-shadow: 0 0 20px rgba(234, 88, 12, 0.1);
+  max-width: 500px;
+}
+
+.glow-svg {
+  filter: drop-shadow(0 0 8px rgba(234, 88, 12, 0.6));
+}
+
+.construction-text {
+  letter-spacing: 0.2em;
+  font-size: 0.8rem;
+  text-transform: uppercase;
+  color: #fdba74;
+  margin-top: 2rem;
+  animation: pulse 2s cubic-bezier(0.4, 0, 0.6, 1) infinite;
+}
+
+@keyframes pulse {
+  0%, 100% { opacity: 1; }
+  50% { opacity: 0.5; }
+}
