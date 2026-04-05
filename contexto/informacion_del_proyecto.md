@@ -1,81 +1,98 @@
-# Documentación del Proyecto de Tesis
+# Documentación Arquitectónica del Proyecto de Tesis
 
 ## 1. Visión General del Proyecto
-Este proyecto ("tesis-proyecto") es una plataforma administrativa (V1) en fase de desarrollo para gestionar procesos operativos, roles de usuario, tareas, vulnerabilidades y tickets de soporte de forma automatizada y escalable. Aunque la visión del sistema incluye un frontend rico (React-based) integrado con un backend robusto estructurado en **Laravel**, el estado actual del repositorio refleja el andamiaje base y la estructura inicial (clean slate) bajo **Laravel 13** y **PHP 8.3**.
+Este proyecto ("tesis-proyecto") consiste en el desarrollo de dos sistemas web integrados mediante arquitecturas de comunicación continua, pero con interfaces gráficas estructuradas de forma aislada. Se divide en dos módulos principales:
+1. **Página Principal (Plataforma Landing)**: Accesible mediante el directorio raíz de la aplicación web (Ruta URI: `/`). Actúa como el front-end representativo inicial para la plataforma, destinado a proveer la estructura de acceso, autenticación de usuarios y navegación base del sistema público.
+2. **Módulo de Monitoreo e Inteligencia (Dashboard)**: Desplegado bajo entorno aislado (Ruta URI: `/monitoreo`). Actúa como el dashboard administrativo enfocado con exclusividad en la seguridad operativa del ecosistema web. Ejecuta la recolección, parseo y visualización de logs del entorno (trazabilidad de acceso, intentos de login, comportamiento anómalo), presentando dichas métricas mediante telemetría y alertas en tiempo real.
 
-El enfoque principal del software es garantizar alta disponibilidad, administración mediante Control de Acceso Basado en Roles (RBAC), seguir principios de Arquitectura Limpia, y proveer una interfaz corporativa estilizada y premium.
+Toda la estructura tecnológica ha sido desarrollada utilizando un patrón arquitectónico híbrido de Multi-Page Application (MPA), donde el framework Laravel delega la renderización del Document Object Model (DOM) directamente a la librería declarativa React en distintas páginas controladas.
 
 ## 2. Estado Actual del Repositorio
-Actualmente, el proyecto se encuentra consolidado sobre un proyecto de Laravel completamente inicializado. 
-El andamiaje (scaffold) del frontend está configurado nativamente con el empaquetador **Vite** y el entorno de diseño rápido **TailwindCSS v4**, estructurado para ser integrado posteriormente con componentes UI responsivos.
+El andamiaje técnico inicial (scaffolding) se encuentra en un estado de desarrollo local estable. La transición de una estructura convencional de renderizado de servidor bajo directivas de plantillas, hacia una renderización estricta sobre el cliente, se ha materializado a través del acoplamiento nativo de Vite JS.
 
-### 2.1. Stack Tecnológico Instalado
-**Backend (Motor de la Aplicación):**
-- **Laravel Framework**: v13.0 (Estructura de enrutamiento y lógica de negocio).
-- **PHP**: ^8.3 (Lenguaje del servidor).
-- **Dependencias Clave**: `laravel/tinker`, `laravel/pail` (logging avanzado), `laravel/pint` (calidad de código PHP) y `phpunit` (para pruebas unitarias e integración v12.5.12).
+### 2.1. Stack Tecnológico Estructural
+**Infraestructura de Backend y Capa de Datos:**
+- **Laravel Framework**: v13.0 (Manejo de ruteo base, transacciones de API, y orquestación asíncrona de seguridad).
+- **PHP**: ^8.3 (Motor transaccional del lado del servidor).
+- **Motor de Base de Datos**: SQLite (Implementado para la iteración local por su portabilidad sin requerir de demonios externos).
 
-**Frontend (Interfaz y Empaquetado):**
-- **Node.js y NPM**: Entornos de ejecución y gestión de paqueterías de cliente.
-- **Vite**: ^8.0.0 (HMR y compilador de entorno ultrarrápido).
-- **Tailwind CSS**: ^4.0.0 (Junto con sus plugins de Vite `@tailwindcss/vite` para estilos CSS utilitarios de alto rendimiento).
-- **Axios**: Cliente predeterminado para el manejo de peticiones asíncronas HTTP.
+**Infraestructura de Frontend (Capa de Presentación Desacoplada):**
+- **React y ReactDOM**: ^19.2 (Responsable exclusivo del montaje del componente principal al DOM empleando sintaxis TSX).
+- **TypeScript**: ^6.0.2 (Habilitado con tipado estático inferido globalmente para validación en tiempo de compilación y minificación de errores de ejecución).
+- **Vite**: ^8.0.0 (Empaquetador de módulos de alta resolución y servidor de desarrollo HMR. Ha sido configurado con directiva de tipo "Multi-Input" para compilar de manera absoluta la Página Landing y la Página Monitoreo como recursos ajenos entre sí).
+- **Tailwind CSS**: ^4.0.0 (Framework CSS basado en utility-classes; el barrido de su compilador ha sido confinado al path estricto de cada respectiva página mediante la directiva relativa `@source`).
 
-## 3. Estructura de Directorios
-La arquitectura base sigue el estándar MVC refinado del ecosistema Laravel:
+Actualmente, ambas topologías (Landing y Monitoreo) renderizan un wireframe de desarrollo de tipo minimalista y terminal-técnico. Este diseño sustituye el uso de iconos predefinidos y caracteres por formato escalable vectorial sin estado (SVG), acoplando visualmente cada página hacia sus esquemas primarios de contraste y paleta de colorización monocromática.
 
-- `app/`: Contiene el núcleo lógico de la aplicación (Modelos de Base de Datos, Controladores, Middlewares). Inicializado con la entidad mínima estandar (Ej. `User.php`).
-- `bootstrap/`: Archivos para el inicio de la aplicación (bootstrapping) y sistema de caché de provisión del framework.
-- `config/`: Entorno detallado y variables con el esquema de configuración para la aplicación (DBs, autenticación, mailer, queues).
-- `contexto/`: Directorio destinado a almacenar la documentación maestra, manuales y notas de trazabilidad (como este mismo documento).
-- `database/`: Estructuración de la capa de persistencia de datos y abstracciones de registros `factory`/`seeder`. Dispone de migraciones iniciales para usuarios, caché y jobs/colas de tareas.
-- `public/`: El único punto de entrada público expuesto al entorno web (`index.php`) e indexación estática (imágenes, bundles CSS/JS).
-- `resources/`: Comprende los recursos sin procesar. Alberga scripts base (`js/`), estilos (`css/`), y las vistas primordiales controladas por la plantilla nativa Blade (`views/`).
-- `routes/`: Orquestación y puntos de conexión (API, Web, Consola).
-- `storage/`: Contenedor de almacenamiento local del sistema para registros (logs), vistas compiladas y depósitos de subidas de información.
-- `tests/`: Framework de pruebas modulares y testing automatizado bajo Pest/PHPUnit.
+## 3. Topología y Estructura de Directorios (Resources)
+Con la finalidad de garantizar el aislamiento semántico del código en la capa de presentación de cliente, el directorio matriz del repositorio (`resources/`) fue refactorizado, erradicando carpetas de unificación previas:
 
-### Archivos Principales en la Raíz
-- `README.md`: Documentación oficial indicando el enfoque temático, etiquetas (badges) del proyecto y los pasos estandarizados de despliegue.
-- `composer.json` / `composer.lock`: Orquestan y resuelven las dependencias del ecosistema nativo de PHP.
-- `package.json` / `package-lock.json`: Dictan los paquetes preinstalados de Javascript e incluyen los scripts `"dev"` o `"build"` de Vite.
-- `vite.config.js`: Reglas directas para compilar el código cliente a través de Laravel Vite Plugin.
-- `.env.example`: Estructura molde del archivo de credenciales universales de entorno que debe crearse para conexión a la base de datos (relacional/SQLite).
-- `artisan`: Aplicación por consola para emitir instrucciones al sistema Laravel (migraciones, controladores, seeders).
+### 3.1. Arquitectura de Páginas (Multi-Page Frontends)
 
-## 4. Guía Sintetizada de Inicialización Local
-Se han preestablecido rutinas avanzadas en el archivo principal `composer.json` del proyecto para eficientar el desarrollo.
+```text
+resources/
+├── landing/               (Página React: Interfaz Principal Pública)
+│   ├── app.tsx            (Punto lógico de entrada de React hacia el DOM local)
+│   ├── assets/            (Archivos de fuente, binarios transaccionales o librerías gráficas fijas)
+│   ├── components/        (Nódulos React de Interfaz de Usuario e Interacción Gráfica)
+│   ├── css/
+│   │   └── app.css        (Entorno Tailwind v4 confinado e inyectado al pipeline exclusivo de la Landing)
+│   ├── images/            (Ficheros rasterizados estáticos optimizados: JPG, PNG, WEBP)
+│   ├── layouts/           (Componentes de Ordenamiento Estructural Jerárquico HOC)
+│   ├── types/             (Definición de Clases e Interfaces globales para comprobación de TypeScript)
+│   └── utils/             (Scripts o módulos para el procesamiento, limpieza o evaluación de variables)
+│
+├── monitoreo/             (Página React: Sistema de Dashboard y Logs)
+│   ├── app.tsx            (Punto lógico de entrada de React hacia el DOM subyacente)
+│   ├── assets/
+│   ├── components/
+│   ├── css/
+│   │   └── app.css        (Entorno Tailwind v4 confinado al pipeline exclusivo del Monitoreo)
+│   ├── images/
+│   ├── layouts/
+│   ├── types/
+│   └── utils/
+│
+└── views/                 (Plantillas nativas del core inicializador Laravel "Root Nodes")
+    ├── landing.blade.php  (Interpreta request GET ordinario de host general y monta el compilado de Landing)
+    └── monitoreo.blade.php(Interpreta request GET de la ruta referenciada y monta el compilado de Monitoreo)
+```
 
-1. **Dependencias:**
+### 3.2. Configuración y Resoluciones (Overrides)
+- `routes/web.php`: Archivo de enrutamiento web fundamental. Ejerce la intercepción primaria despachando las plantillas de inyección del DOM de forma rígida hacia sus respectivos endpoints de cliente:
+  - Solicitud HTTP al directorio raíz `GET /` -> Redirecciona el flujo al DOM de la Landing Page.
+  - Solicitud HTTP al subdirectorio `GET /monitoreo` -> Redirecciona el flujo al DOM del entorno de Monitoreo.
+- `vite.config.js`: Remodelado operativamente para despachar un esquema Multi-Input apuntando en paralelo a los dos puntos cardinales de arranque TSX. Adicionalmente, cuenta con directivas `resolve.alias` paramétricas (i.e. `@landing/*` y `@monitoreo/*`) minimizando importaciones relativas transversales en el uso de los namespaces funcionales.
+- `tsconfig.json`: Soporta la rigidez estructural mediante la redefinición del atributo `include` y mapeo interno en el atributo `paths`.
+
+## 4. Secuencia de Inicialización Local
+
+Tras el procedimiento de clonación del control de versiones (Pull Request / Clone local), la directiva de despliegue obliga a un arranque en simultáneo:
+
+1. **Orquestación de Dependencias Binarias:**
+   Se exhorta a restaurar la rama de cacheo remota invocando de forma síncrona ambos administradores:
    ```bash
    composer install && npm install
    ```
 
-2. **Entorno Principal:**
+2. **Macro-Entorno de Intercambio Local de Módulos (HMR):**
+   A causa del desacoplamiento inherente del modelo multi-página en Vite con Laravel, resulta de carácter obligatorio accionar terminales duales:
    ```bash
-   cp .env.example .env
-   php artisan key:generate
+   # Daemon Primario (Servicio web back-end Laravel predeterminado a puerto 8000):
+   php artisan serve
+   
+   # Daemon Secundario (Observador activo TypeScript, Compilador Tailwind CSS y Vite Dev Server):
+   npm run dev
    ```
 
-3. **Migración del Esquema:**
-   Asume la base configurada en `.env`
-   ```bash
-   php artisan migrate
-   ```
+3. **Ejecución y Verificación Terminal:**
+   Ingresar desde el navegador hacia el host local asignado:
+   - Para visualizar el entorno de la **Página Landing**, diríjase a la URL: `http://127.0.0.1:8000/`
+   - Para adentrarse al entorno del **Dashboard de Monitoreo**, navegue a: `http://127.0.0.1:8000/monitoreo`
 
-4. **Macro-Comando de Desarrollo (Run Dev):**
-   Posee un script compuesto que emite en paralelo múltiples entornos para comodidad del desarrollador:
-   ```bash
-   composer run dev
-   ```
-   Ejecuta concurrentemente:
-   - Servidor HTTP (`php artisan serve`)
-   - Trabajador de Colas (`php artisan queue:listen`)
-   - Emisión moderna de Logs (`php artisan pail`)
-   - Servidor de assets Vite (`npm run dev`)
+## 5. Roadmap de Ingeniería a Corto Plazo
+El proyecto ahora demanda la construcción progresiva que otorgue funcionalidad a este molde arquitectónico y estético:
 
-## 5. Próximos Eventos Proyectados
-Tomando en cuenta los requerimientos del proyecto corporativo de la Administración NHL:
-- Reemplazar/Extender el stack de interfaz inyectando formalmente **React** al pipeline de Vite (y analizando una estructura por inercia [Inertia.js] o APIs desacopladas).
-- Definir los modelos, factorías y controladores requeridos para **Permisos, Roles, Tareas, Vulnerabilidades y Tickets**.
-- Adherencia de temáticas estilizadas y branding corporativo (diseño moderno y animado).
+- **Desarrollo Extensivo Frontend Híbrido**: Proceder a programar las plantillas, formularios de seguridad y maquetas en base a React TSX utilizando el entorno visual preparado, rellenando progresivamente el núcleo estructural de `components` en cada página según corresponda.
+- **Construcción de Middleware Transaccional**: Evaluar las configuraciones de seguridad (CSRF) y barreras autenticadoras para transacciones inter-modulo (Autenticaciones / API Tokens / Sesiones).
+- **Procesamiento Algorítmico Laravel Endpoints**: Definición rigurosa de los API Resources orientados plenamente a consumir estructuras de la base de datos para la ingesta paralela que nutrirá el Dashboard de Monitoreo.
