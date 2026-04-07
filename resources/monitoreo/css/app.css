@@ -17,9 +17,9 @@
 	--color-monitoreo-accent: #D4D4D4;
 	--color-monitoreo-light: #FFFFFF;
 	--color-monitoreo-text-secondary: #BFBFBF;
-	--color-monitoreo-danger: #D4D4D4;
-	--color-monitoreo-success: #F5F5F5;
-	--color-monitoreo-warning: #CFCFCF;
+	--color-monitoreo-danger: #EF4444;
+	--color-monitoreo-success: #22C55E;
+	--color-monitoreo-warning: #F59E0B;
 	--color-monitoreo-info: #E5E5E5;
 
 	--font-sans: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", "Courier New", monospace;

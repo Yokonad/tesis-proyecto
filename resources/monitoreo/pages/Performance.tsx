@@ -65,8 +65,8 @@ const Performance: React.FC = () => {
               <XAxis dataKey="time" stroke="#AAA" tick={{fontFamily: 'VT323', fontSize: 16}} />
               <YAxis stroke="#AAA" tick={{fontFamily: 'VT323', fontSize: 16}} />
               <Tooltip content={<CustomTooltip />} />
-              <Line type="stepAfter" dataKey="lcp" name="LCP" stroke="#D4D4D4" strokeWidth={3} dot={false} />
-              <Line type="stepAfter" dataKey="fcp" name="FCP" stroke="#FFFFFF" strokeWidth={3} dot={false} />
+              <Line type="stepAfter" dataKey="lcp" name="LCP" stroke="#F59E0B" strokeWidth={3} dot={false} />
+              <Line type="stepAfter" dataKey="fcp" name="FCP" stroke="#22C55E" strokeWidth={3} dot={false} />
             </LineChart>
           </ResponsiveContainer>
         </div>
@@ -78,7 +78,7 @@ const Performance: React.FC = () => {
               <div key={item.label}>
                 <p className="mb-2 text-sm text-monitoreo-text-secondary">{item.label}</p>
                 <div className="h-4 w-full border border-monitoreo-border bg-monitoreo-darker">
-                  <div className="h-full bg-monitoreo-light" style={{ width: item.width }} />
+                  <div className="h-full bg-monitoreo-warning" style={{ width: item.width }} />
                 </div>
               </div>
             ))}

@@ -6,9 +6,9 @@ interface StatusBadgeProps {
 
 export const StatusBadge: React.FC<StatusBadgeProps> = ({ status }) => {
   const styles = {
-    online: 'text-monitoreo-light pixel-border bg-transparent',
-    degraded: 'text-monitoreo-light pixel-border bg-transparent',
-    down: 'text-monitoreo-light pixel-border bg-transparent animate-pulse'
+    online: 'text-monitoreo-success border border-monitoreo-success bg-transparent',
+    degraded: 'text-monitoreo-warning border border-monitoreo-warning bg-transparent',
+    down: 'text-monitoreo-danger border border-monitoreo-danger bg-transparent animate-pulse'
   };
 
   const labels = {

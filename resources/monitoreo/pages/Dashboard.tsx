@@ -98,11 +98,11 @@ const Dashboard: React.FC = () => {
               <AreaChart data={mockTrafficData}>
                 <CartesianGrid strokeDasharray="3 3" stroke="#333" />
                 <XAxis dataKey="time" stroke="#AAA" tick={{fontFamily: 'VT323', fontSize: 16}} />
-                <YAxis yAxisId="left" stroke="#E5E5E5" tick={{fontFamily: 'VT323', fontSize: 16}} />
-                <YAxis yAxisId="right" orientation="right" stroke="#A3A3A3" tick={{fontFamily: 'VT323', fontSize: 16}} />
+                <YAxis yAxisId="left" stroke="#22C55E" tick={{fontFamily: 'VT323', fontSize: 16}} />
+                <YAxis yAxisId="right" orientation="right" stroke="#F59E0B" tick={{fontFamily: 'VT323', fontSize: 16}} />
                 <Tooltip content={<CustomTooltip />} />
-                <Area yAxisId="left" type="step" dataKey="requests" name="Requests" stroke="#E5E5E5" fill="#E5E5E5" fillOpacity={0.2} strokeWidth={3} />
-                <Area yAxisId="right" type="step" dataKey="latency" name="Latencia (ms)" stroke="#A3A3A3" fillOpacity={0} strokeWidth={2} />
+                <Area yAxisId="left" type="step" dataKey="requests" name="Requests" stroke="#22C55E" fill="#22C55E" fillOpacity={0.15} strokeWidth={3} />
+                <Area yAxisId="right" type="step" dataKey="latency" name="Latencia (ms)" stroke="#F59E0B" fillOpacity={0} strokeWidth={2} />
               </AreaChart>
             </ResponsiveContainer>
           </div>
@@ -117,8 +117,8 @@ const Dashboard: React.FC = () => {
                 <XAxis dataKey="time" stroke="#AAA" tick={{fontFamily: 'VT323', fontSize: 16}} />
                 <YAxis stroke="#AAA" tick={{fontFamily: 'VT323', fontSize: 16}} />
                 <Tooltip content={<CustomTooltip />} />
-                <Bar dataKey="error4xx" name="Errores 4XX" stackId="a" fill="#D4D4D4" />
-                <Bar dataKey="error5xx" name="Errores 5XX" stackId="a" fill="#737373" />
+                <Bar dataKey="error4xx" name="Errores 4XX" stackId="a" fill="#F59E0B" />
+                <Bar dataKey="error5xx" name="Errores 5XX" stackId="a" fill="#EF4444" />
               </BarChart>
             </ResponsiveContainer>
           </div>
@@ -142,25 +142,25 @@ const Dashboard: React.FC = () => {
                 <tr className="border-b border-monitoreo-dark hover:bg-monitoreo-darker transition-colors">
                   <td className="py-2 text-monitoreo-light font-bold">GET</td>
                   <td className="py-2 text-white">/api/v1/users</td>
-                  <td className="py-2"><span className="text-monitoreo-light">200</span></td>
+                  <td className="py-2"><span className="text-monitoreo-success">200</span></td>
                   <td className="py-2 text-monitoreo-secondary">45ms</td>
                 </tr>
                 <tr className="border-b border-monitoreo-dark hover:bg-monitoreo-darker transition-colors">
                   <td className="py-2 text-monitoreo-light font-bold">POST</td>
                   <td className="py-2 text-white">/api/v1/auth/login</td>
-                  <td className="py-2"><span className="text-monitoreo-light">201</span></td>
+                  <td className="py-2"><span className="text-monitoreo-success">201</span></td>
                   <td className="py-2 text-monitoreo-secondary">120ms</td>
                 </tr>
                 <tr className="border-b border-monitoreo-dark hover:bg-monitoreo-darker transition-colors">
                   <td className="py-2 text-monitoreo-light font-bold">DELETE</td>
                   <td className="py-2 text-white">/api/v1/data/1029</td>
-                  <td className="py-2"><span className="text-monitoreo-secondary">403</span></td>
+                  <td className="py-2"><span className="text-monitoreo-warning">403</span></td>
                   <td className="py-2 text-monitoreo-secondary">32ms</td>
                 </tr>
                 <tr className="border-b border-monitoreo-dark hover:bg-monitoreo-darker transition-colors">
                   <td className="py-2 text-monitoreo-light font-bold">GET</td>
                   <td className="py-2 text-white">/api/v1/reports</td>
-                  <td className="py-2"><span className="text-monitoreo-secondary">500</span></td>
+                  <td className="py-2"><span className="text-monitoreo-danger">500</span></td>
                   <td className="py-2 text-monitoreo-secondary">2500ms</td>
                 </tr>
               </tbody>

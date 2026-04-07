@@ -60,7 +60,7 @@ const Endpoints: React.FC = () => {
                <div key={i} className="grid grid-cols-[92px_1fr_96px] items-center gap-3 border border-monitoreo-border p-3">
                  <span className="text-sm font-semibold text-monitoreo-light">{route.method}</span>
                  <span className="truncate font-mono text-sm text-monitoreo-light">{route.path}</span>
-                 <span className="text-right text-sm font-semibold text-monitoreo-light">{route.ms}ms</span>
+                 <span className="text-right text-sm font-semibold text-monitoreo-warning">{route.ms}ms</span>
                </div>
             ))}
           </div>
@@ -76,7 +76,7 @@ const Endpoints: React.FC = () => {
                <div key={i} className="grid grid-cols-[92px_1fr_96px] items-center gap-3 border border-monitoreo-border p-3">
                  <span className="text-sm font-semibold text-monitoreo-light">{route.method}</span>
                  <span className="truncate font-mono text-sm text-monitoreo-light">{route.path}</span>
-                 <span className="text-right text-sm font-semibold text-monitoreo-secondary">{route.err}</span>
+                 <span className="text-right text-sm font-semibold text-monitoreo-danger">{route.err}</span>
                </div>
             ))}
           </div>

@@ -2,7 +2,6 @@ import React, { useState } from 'react';
 import { Card } from '@monitoreo/components/ui/Card';
 import { Badge } from '@monitoreo/components/ui/Badge';
 import { Button } from '@monitoreo/components/ui/Button';
-import { PageHeader } from '@monitoreo/components/ui/PageHeader';
 
 type LogType = 'acceso' | 'error' | 'login';
 
@@ -56,7 +55,7 @@ const Logs: React.FC = () => {
 
   const getLogTypeColor = (type: LogType) => {
     switch (type) {
-      case 'acceso': return 'info';
+      case 'acceso': return 'warning';
       case 'error': return 'danger';
       case 'login': return 'success';
       default: return 'neutral';

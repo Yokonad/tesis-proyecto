@@ -1,7 +1,6 @@
 import React from 'react';
 import { Card } from '@monitoreo/components/ui/Card';
 import { Badge } from '@monitoreo/components/ui/Badge';
-import { Button } from '@monitoreo/components/ui/Button';
 
 const Security: React.FC = () => {
   const overview = [
@@ -12,9 +11,9 @@ const Security: React.FC = () => {
   ];
 
   const suspiciousIps = [
-    { ip: '192.168.1.105', attempts: 45, risk: 'Alto', location: 'Desconocida' },
-    { ip: '203.0.113.45', attempts: 23, risk: 'Medio', location: 'CN' },
-    { ip: '198.51.100.12', attempts: 18, risk: 'Bajo', location: 'RU' },
+    { ip: '192.168.1.105', attempts: 45, risk: 'Alto', location: 'Desconocida', detection: 94 },
+    { ip: '203.0.113.45', attempts: 23, risk: 'Medio', location: 'CN', detection: 68 },
+    { ip: '198.51.100.12', attempts: 18, risk: 'Bajo', location: 'RU', detection: 36 },
   ];
 
   const bruteForce = [
@@ -70,7 +69,7 @@ const Security: React.FC = () => {
                 <th className="px-3 py-3 text-left font-medium text-monitoreo-text-secondary">Intentos</th>
                 <th className="px-3 py-3 text-left font-medium text-monitoreo-text-secondary">Riesgo</th>
                 <th className="px-3 py-3 text-left font-medium text-monitoreo-text-secondary">Ubicacion</th>
-                <th className="px-3 py-3 text-left font-medium text-monitoreo-text-secondary">Accion</th>
+                <th className="px-3 py-3 text-left font-medium text-monitoreo-text-secondary">Deteccion %</th>
               </tr>
             </thead>
             <tbody>
@@ -84,9 +83,9 @@ const Security: React.FC = () => {
                     </Badge>
                   </td>
                   <td className="px-3 py-3 text-monitoreo-text-secondary">{item.location}</td>
-                  <td className="px-3 py-3">
-                    <Button size="sm" variant="danger">Bloquear</Button>
-                  </td>
+                  <td className={`px-3 py-3 font-semibold ${
+                    item.risk === 'Alto' ? 'text-monitoreo-danger' : item.risk === 'Medio' ? 'text-monitoreo-warning' : 'text-monitoreo-success'
+                  }`}>{item.detection}%</td>
                 </tr>
               ))}
             </tbody>

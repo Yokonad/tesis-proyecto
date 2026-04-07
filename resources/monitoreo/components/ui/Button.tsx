@@ -18,7 +18,7 @@ export const Button: React.FC<ButtonProps> = ({
   const variantStyles = {
     primary: 'border-monitoreo-border text-monitoreo-light',
     secondary: 'border-transparent text-monitoreo-text-secondary hover:text-monitoreo-light',
-    danger: 'border-monitoreo-light text-monitoreo-light hover:border-monitoreo-light hover:text-monitoreo-light',
+    danger: 'border-monitoreo-danger text-monitoreo-danger hover:border-monitoreo-danger hover:text-monitoreo-danger',
     ghost: 'border-transparent text-monitoreo-light hover:border-monitoreo-light',
   };
 
