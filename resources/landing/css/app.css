@@ -1,12 +1,18 @@
 @import 'tailwindcss';
 
+/* Escanea SOLO archivos dentro de landing/ (independiente de monitoreo) */
 @source '../**/*.tsx';
+@source '../**/*.ts';
+
+/* ============================================
+   LANDING MODULE - Design Tokens
+   Paleta: Naranja industrial / Dark
+   ============================================ */
 
 body {
   font-family: 'Inter', sans-serif;
   margin: 0;
   background-color: #0a0a0a;
-  /* Fondo minimalista tipo consola de comandos (grid de puntos) */
   background-image: radial-gradient(circle, rgba(234, 88, 12, 0.3) 1px, transparent 1px);
   background-size: 24px 24px;
   color: #fb923c;
@@ -16,7 +22,7 @@ body {
   justify-content: center;
 }
 
-.card-minimal {
+.landing-card {
   background: rgba(10, 10, 10, 0.8);
   border: 1px solid rgba(234, 88, 12, 0.4);
   padding: 4rem;
@@ -27,20 +33,20 @@ body {
   max-width: 500px;
 }
 
-.glow-svg {
+.landing-glow-svg {
   filter: drop-shadow(0 0 8px rgba(234, 88, 12, 0.6));
 }
 
-.construction-text {
+.landing-construction-text {
   letter-spacing: 0.2em;
   font-size: 0.8rem;
   text-transform: uppercase;
   color: #fdba74;
   margin-top: 2rem;
-  animation: pulse 2s cubic-bezier(0.4, 0, 0.6, 1) infinite;
+  animation: landing-pulse 2s cubic-bezier(0.4, 0, 0.6, 1) infinite;
 }
 
-@keyframes pulse {
+@keyframes landing-pulse {
   0%, 100% { opacity: 1; }
   50% { opacity: 0.5; }
 }

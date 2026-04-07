@@ -21,8 +21,11 @@ El andamiaje técnico inicial (scaffolding) se encuentra en un estado de desarro
 - **TypeScript**: ^6.0.2 (Habilitado con tipado estático inferido globalmente para validación en tiempo de compilación y minificación de errores de ejecución).
 - **Vite**: ^8.0.0 (Empaquetador de módulos de alta resolución y servidor de desarrollo HMR. Ha sido configurado con directiva de tipo "Multi-Input" para compilar de manera absoluta la Página Landing y la Página Monitoreo como recursos ajenos entre sí).
 - **Tailwind CSS**: ^4.0.0 (Framework CSS basado en utility-classes; el barrido de su compilador ha sido confinado al path estricto de cada respectiva página mediante la directiva relativa `@source`).
+- **React Router DOM**: ^7.14.0 (Enrutamiento SPA dentro de cada módulo independiente).
 
 Actualmente, ambas topologías (Landing y Monitoreo) renderizan un wireframe de desarrollo de tipo minimalista y terminal-técnico. Este diseño sustituye el uso de iconos predefinidos y caracteres por formato escalable vectorial sin estado (SVG), acoplando visualmente cada página hacia sus esquemas primarios de contraste y paleta de colorización monocromática.
+
+**Principio de Aislamiento:** Las clases CSS personalizadas están prefijadas con el nombre del módulo (`landing-*` y `monitoreo-*`) para evitar colisiones de estilos entre módulos. Cada módulo posee su propio archivo de declaraciones TypeScript (`types/global.d.ts`) garantizando independencia total.
 
 ## 3. Topología y Estructura de Directorios (Resources)
 Con la finalidad de garantizar el aislamiento semántico del código en la capa de presentación de cliente, el directorio matriz del repositorio (`resources/`) fue refactorizado, erradicando carpetas de unificación previas:
@@ -31,31 +34,45 @@ Con la finalidad de garantizar el aislamiento semántico del código en la capa 
 
 ```text
 resources/
-├── landing/               (Página React: Interfaz Principal Pública)
-│   ├── app.tsx            (Punto lógico de entrada de React hacia el DOM local)
-│   ├── assets/            (Archivos de fuente, binarios transaccionales o librerías gráficas fijas)
-│   ├── components/        (Nódulos React de Interfaz de Usuario e Interacción Gráfica)
+├── landing/                (Página React: Interfaz Principal Pública)
+│   ├── app.tsx             (Punto lógico de entrada de React hacia el DOM local)
+│   ├── assets/             (Archivos estáticos: imágenes, iconos, logos específicos del landing)
+│   ├── components/         (Componentes React del módulo)
+│   │   ├── ui/             (Componentes base reutilizables: botones, inputs, modales)
+│   │   └── shared/         (Componentes estructurales: Header, Footer, Navbar)
+│   ├── context/            (React Context API para estado local del módulo)
 │   ├── css/
-│   │   └── app.css        (Entorno Tailwind v4 confinado e inyectado al pipeline exclusivo de la Landing)
-│   ├── images/            (Ficheros rasterizados estáticos optimizados: JPG, PNG, WEBP)
-│   ├── layouts/           (Componentes de Ordenamiento Estructural Jerárquico HOC)
-│   ├── types/             (Definición de Clases e Interfaces globales para comprobación de TypeScript)
-│   └── utils/             (Scripts o módulos para el procesamiento, limpieza o evaluación de variables)
+│   │   └── app.css         (Entorno Tailwind v4 confinado al pipeline exclusivo de Landing)
+│   ├── features/           (Lógica agrupada por funcionalidad: auth, certificados, etc.)
+│   ├── hooks/              (Custom React Hooks locales al módulo)
+│   ├── layouts/            (Componentes de Ordenamiento Estructural Jerárquico HOC)
+│   ├── pages/              (Componentes a nivel de vista/ruta completa)
+│   ├── services/           (Comunicación con API backend Laravel o APIs externas)
+│   ├── types/
+│   │   └── global.d.ts     (Declaraciones de tipo TypeScript independientes del módulo)
+│   └── utils/              (Funciones auxiliares, formateadores, constantes)
 │
-├── monitoreo/             (Página React: Sistema de Dashboard y Logs)
-│   ├── app.tsx            (Punto lógico de entrada de React hacia el DOM subyacente)
+├── monitoreo/              (Página React: Sistema de Dashboard y Logs)
+│   ├── app.tsx             (Punto lógico de entrada de React hacia el DOM subyacente)
 │   ├── assets/
 │   ├── components/
+│   │   ├── ui/
+│   │   └── shared/
+│   ├── context/
 │   ├── css/
-│   │   └── app.css        (Entorno Tailwind v4 confinado al pipeline exclusivo del Monitoreo)
-│   ├── images/
+│   │   └── app.css         (Entorno Tailwind v4 confinado al pipeline exclusivo del Monitoreo)
+│   ├── features/
+│   ├── hooks/
 │   ├── layouts/
+│   ├── pages/
+│   ├── services/
 │   ├── types/
+│   │   └── global.d.ts     (Declaraciones de tipo TypeScript independientes del módulo)
 │   └── utils/
 │
-└── views/                 (Plantillas nativas del core inicializador Laravel "Root Nodes")
-    ├── landing.blade.php  (Interpreta request GET ordinario de host general y monta el compilado de Landing)
-    └── monitoreo.blade.php(Interpreta request GET de la ruta referenciada y monta el compilado de Monitoreo)
+└── views/                  (Plantillas nativas del core inicializador Laravel "Root Nodes")
+    ├── landing.blade.php   (Interpreta request GET de host general y monta el compilado de Landing)
+    └── monitoreo.blade.php (Interpreta request GET de la ruta referenciada y monta el compilado de Monitoreo)
 ```
 
 ### 3.2. Configuración y Resoluciones (Overrides)
@@ -63,11 +80,11 @@ resources/
   - Solicitud HTTP al directorio raíz `GET /` -> Redirecciona el flujo al DOM de la Landing Page.
   - Solicitud HTTP al subdirectorio `GET /monitoreo` -> Redirecciona el flujo al DOM del entorno de Monitoreo.
 - `vite.config.js`: Remodelado operativamente para despachar un esquema Multi-Input apuntando en paralelo a los dos puntos cardinales de arranque TSX. Adicionalmente, cuenta con directivas `resolve.alias` paramétricas (i.e. `@landing/*` y `@monitoreo/*`) minimizando importaciones relativas transversales en el uso de los namespaces funcionales.
-- `tsconfig.json`: Soporta la rigidez estructural mediante la redefinición del atributo `include` y mapeo interno en el atributo `paths`.
+- `tsconfig.json`: Soporta la rigidez estructural mediante la redefinición del atributo `include` y mapeo interno en el atributo `paths`. Cada módulo incluye sus propios archivos `.ts`, `.tsx` y `.d.ts` de forma independiente.
 
 ## 4. Secuencia de Inicialización Local
 
-Tras el procedimiento de clonación del control de versiones (Pull Request / Clone local), la directiva de despliegue obliga a un arranque en simultáneo:
+Tras el procedimiento de clonación del control de versiones (Pull Request / Clone local), la directiva de despliegue obliga a un arranque secuencial:
 
 1. **Orquestación de Dependencias Binarias:**
    Se exhorta a restaurar la rama de cacheo remota invocando de forma síncrona ambos administradores:
@@ -75,7 +92,21 @@ Tras el procedimiento de clonación del control de versiones (Pull Request / Clo
    composer install && npm install
    ```
 
-2. **Macro-Entorno de Intercambio Local de Módulos (HMR):**
+2. **Configuración del Entorno:**
+   Crear el archivo de configuración local y generar la clave de aplicación:
+   ```bash
+   cp .env.example .env
+   php artisan key:generate
+   ```
+
+3. **Preparar la Base de Datos:**
+   Crear el archivo SQLite y ejecutar las migraciones:
+   ```bash
+   touch database/database.sqlite
+   php artisan migrate
+   ```
+
+4. **Macro-Entorno de Intercambio Local de Módulos (HMR):**
    A causa del desacoplamiento inherente del modelo multi-página en Vite con Laravel, resulta de carácter obligatorio accionar terminales duales:
    ```bash
    # Daemon Primario (Servicio web back-end Laravel predeterminado a puerto 8000):
@@ -85,7 +116,12 @@ Tras el procedimiento de clonación del control de versiones (Pull Request / Clo
    npm run dev
    ```
 
-3. **Ejecución y Verificación Terminal:**
+   **Alternativa:** Usar el script integrado de Composer que orquesta todo simultáneamente:
+   ```bash
+   composer dev
+   ```
+
+5. **Ejecución y Verificación Terminal:**
    Ingresar desde el navegador hacia el host local asignado:
    - Para visualizar el entorno de la **Página Landing**, diríjase a la URL: `http://127.0.0.1:8000/`
    - Para adentrarse al entorno del **Dashboard de Monitoreo**, navegue a: `http://127.0.0.1:8000/monitoreo`

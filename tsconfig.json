@@ -23,7 +23,9 @@
   "include": [
     "resources/landing/**/*.ts",
     "resources/landing/**/*.tsx",
+    "resources/landing/**/*.d.ts",
     "resources/monitoreo/**/*.ts",
-    "resources/monitoreo/**/*.tsx"
+    "resources/monitoreo/**/*.tsx",
+    "resources/monitoreo/**/*.d.ts"
   ]
 }

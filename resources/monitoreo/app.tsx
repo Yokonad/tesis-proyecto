@@ -1,14 +1,12 @@
 import React from 'react';
 import { createRoot } from 'react-dom/client';
-import './css/app.css';
 
 const MonitoreoApp = () => {
   return (
-    <div className="card-minimal">
+    <div className="monitoreo-card">
       <div className="flex justify-center mb-6">
-        {/* SVG Minimalista en vez de emojis */}
         <svg 
-          className="w-16 h-16 text-sky-500 glow-svg" 
+          className="w-16 h-16 text-sky-500 monitoreo-glow-svg" 
           fill="none" 
           stroke="currentColor" 
           viewBox="0 0 24 24" 
@@ -25,7 +23,7 @@ const MonitoreoApp = () => {
 
       <div className="w-full h-px bg-sky-500 opacity-30 my-6"></div>
 
-      <p className="construction-text">En Construcción_</p>
+      <p className="monitoreo-construction-text">En Construcción_</p>
 
       <a href="/" className="inline-block mt-8 text-xs text-sky-400 hover:text-sky-200 uppercase tracking-widest transition-colors duration-300">
         &gt; Volver a módulo Landing
