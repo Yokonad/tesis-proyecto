@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import { Link, useLocation } from 'react-router-dom';
 
 const sidebarItems = [
@@ -10,9 +10,27 @@ const sidebarItems = [
   { path: '/monitoreo/usuarios', label: 'Usuarios', idx: 6 },
 ];
 
-export const Sidebar: React.FC = () => {
+interface SidebarProps {
+  isCollapsed: boolean;
+  onToggle: () => void;
+}
+
+export const Sidebar: React.FC<SidebarProps> = ({ isCollapsed, onToggle }) => {
   const location = useLocation();
-  const [isCollapsed, setIsCollapsed] = useState(false);
+  const [showMetaText, setShowMetaText] = useState(!isCollapsed);
+
+  useEffect(() => {
+    if (isCollapsed) {
+      setShowMetaText(false);
+      return;
+    }
+
+    const timer = setTimeout(() => {
+      setShowMetaText(true);
+    }, 90);
+
+    return () => clearTimeout(timer);
+  }, [isCollapsed]);
 
   const isActive = (path: string) => {
     return location.pathname === path || (path !== '/monitoreo' && location.pathname.startsWith(path + '/'));
@@ -21,59 +39,65 @@ export const Sidebar: React.FC = () => {
   return (
     <aside
       className={`
-        fixed left-0 top-0 h-screen bg-monitoreo-darker border-r border-monitoreo-border
-        transition-all duration-300 z-50 font-mono
+        fixed left-0 top-0 z-50 flex h-screen flex-col border-r border-monitoreo-border bg-monitoreo-darker font-mono
+        transition-[width] duration-300 ease-in-out
         ${isCollapsed ? 'w-16' : 'w-64'}
       `}
     >
       {/* Header */}
-      <div className="h-16 bg-monitoreo-dark border-b border-monitoreo-border border-dashed flex items-center justify-between px-4">
-        {!isCollapsed && (
-          <h1 className="text-xl md:text-2xl font-bold text-monitoreo-light text-glitch tracking-widest font-mono">
-            MONIT<span className="text-monitoreo-light opacity-80">OR</span>
-          </h1>
-        )}
+      <div className={`flex h-16 items-center border-b border-monitoreo-border px-3 ${isCollapsed ? 'justify-center' : 'justify-between'}`}>
+        {!isCollapsed ? (
+          <h1 className="text-left text-lg font-semibold tracking-[0.24em] text-monitoreo-light">MONITOR</h1>
+        ) : null}
         <button
-          onClick={() => setIsCollapsed(!isCollapsed)}
-          className="text-monitoreo-text-secondary hover:text-monitoreo-light transition-colors"
+          onClick={onToggle}
+          className="inline-flex h-8 w-8 items-center justify-center border border-monitoreo-border text-monitoreo-text-secondary transition-colors hover:border-monitoreo-light hover:text-monitoreo-light"
+          aria-label={isCollapsed ? 'Expandir sidebar' : 'Colapsar sidebar'}
         >
-          {isCollapsed ? '[+]' : '[-]'}
+          <svg viewBox="0 0 20 20" fill="none" aria-hidden="true" className="h-4 w-4">
+            {isCollapsed ? (
+              <path d="M10 4V16M4 10H16" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" />
+            ) : (
+              <path d="M4 10H16" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" />
+            )}
+          </svg>
         </button>
       </div>
 
       {/* Navigation */}
-      <nav className="flex flex-col pt-6 px-2 gap-1">
-        {!isCollapsed && <p className="text-xs text-monitoreo-text-secondary px-4 mb-2">RUN COMMAND</p>}
+      <nav className={`flex-1 space-y-1 overflow-y-auto px-2 ${isCollapsed ? 'pt-[15%] pb-4' : 'py-4'}`}>
+        {!isCollapsed && showMetaText ? (
+          <p className="px-3 pb-1 text-[11px] uppercase tracking-wider text-monitoreo-text-secondary">Run Command</p>
+        ) : null}
         {sidebarItems.map((item) => (
           <Link
             key={item.path}
             to={item.path}
             className={`
-              flex items-center gap-3 px-4 py-2 transition-all duration-200 border border-transparent
+              flex h-10 items-center border text-sm transition-colors duration-200
+              ${isCollapsed ? 'mx-auto w-10 justify-center px-0' : 'justify-start gap-3 px-3'}
               ${
                 isActive(item.path)
-                  ? 'text-monitoreo-light border-monitoreo-light border-dashed'
-                  : 'text-monitoreo-text-secondary hover:bg-monitoreo-card hover:text-monitoreo-light hover:border-monitoreo-border hover:border-dashed'
+                  ? 'border-monitoreo-light text-monitoreo-light'
+                  : 'border-transparent text-monitoreo-text-secondary hover:border-monitoreo-border hover:text-monitoreo-light'
               }
             `}
             title={isCollapsed ? item.label : ''}
           >
-            <span className="text-monitoreo-light font-bold">[{item.idx}]</span>
-            {!isCollapsed && <span className="text-sm">{item.label}</span>}
+            <span className={`text-center text-xs font-semibold text-monitoreo-light ${isCollapsed ? 'w-auto' : 'w-8'}`}>[{item.idx}]</span>
+            {!isCollapsed && <span className="truncate text-sm leading-none">{item.label}</span>}
           </Link>
         ))}
       </nav>
 
       {/* Footer */}
-      <div className="absolute bottom-0 left-0 right-0 p-4 border-t border-monitoreo-border border-dashed bg-monitoreo-darker">
-        {!isCollapsed ? (
-          <div className="text-xs text-monitoreo-text-secondary">
-            <p className="mb-1 text-monitoreo-light">&gt; sys_time</p>
-            <p className="text-monitoreo-light font-bold">{new Date().toLocaleTimeString('es-ES')}</p>
+      <div className="border-t border-monitoreo-border p-3">
+        {!isCollapsed && showMetaText ? (
+          <div className="space-y-1 text-left">
+            <p className="text-[11px] uppercase tracking-wide text-monitoreo-text-secondary">Sys Time</p>
+            <p className="text-sm font-semibold text-monitoreo-light">{new Date().toLocaleTimeString('es-ES')}</p>
           </div>
-        ) : (
-          <div className="mx-auto h-3 w-3 border border-monitoreo-light"></div>
-        )}
+        ) : null}
       </div>
     </aside>
   );
