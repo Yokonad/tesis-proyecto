@@ -1,41 +1,22 @@
 import React from 'react';
 
-interface BadgeProps {
+interface BadgeProps extends React.HTMLAttributes<HTMLSpanElement> {
   variant?: 'success' | 'warning' | 'danger' | 'info' | 'neutral';
-  size?: 'sm' | 'md';
-  children: React.ReactNode;
-  className?: string;
 }
 
-export const Badge: React.FC<BadgeProps> = ({
-  variant = 'neutral',
-  size = 'md',
-  children,
-  className = '',
-}) => {
-  const variantStyles = {
-    success: 'bg-green-100 text-green-800',
-    warning: 'bg-yellow-100 text-yellow-800',
-    danger: 'bg-red-100 text-red-800',
-    info: 'bg-blue-100 text-blue-800',
-    neutral: 'bg-monitoreo-border text-monitoreo-text-secondary',
-  };
-
-  const sizeStyles = {
-    sm: 'px-2 py-1 text-xs',
-    md: 'px-3 py-1.5 text-sm',
+export const Badge: React.FC<BadgeProps> = ({ variant = 'info', className = '', ...props }) => {
+  const variants = {
+    success: 'bg-transparent text-monitoreo-light border border-monitoreo-light',
+    warning: 'bg-transparent text-monitoreo-light border border-monitoreo-secondary',
+    danger: 'bg-transparent text-monitoreo-light border border-monitoreo-light',
+    info: 'bg-transparent text-monitoreo-light border border-monitoreo-border',
+    neutral: 'bg-transparent text-monitoreo-text-secondary border border-monitoreo-border',
   };
 
   return (
-    <span
-      className={`
-        inline-flex items-center rounded-full font-medium
-        ${variantStyles[variant]}
-        ${sizeStyles[size]}
-        ${className}
-      `}
-    >
-      {children}
-    </span>
+    <span 
+      className={`px-2 py-0.5 text-xs font-mono font-bold tracking-widest uppercase inline-block ${variants[variant]} ${className}`}
+      {...props}
+    />
   );
 };

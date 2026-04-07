@@ -1,223 +1,200 @@
 import React from 'react';
 import { useMonitoring } from '@monitoreo/context/MonitoringContext';
 import { Card } from '@monitoreo/components/ui/Card';
-import { Badge } from '@monitoreo/components/ui/Badge';
-import { StatusBadge } from '@monitoreo/components/ui/StatusBadge';
-import { MetricCard } from '@monitoreo/components/ui/MetricCard';
+import { LineChart, Line, BarChart, Bar, AreaChart, Area, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer } from 'recharts';
+
+const mockTrafficData = [
+  { time: '10:00', requests: 400, latency: 120 },
+  { time: '10:05', requests: 450, latency: 125 },
+  { time: '10:10', requests: 600, latency: 150 },
+  { time: '10:15', requests: 800, latency: 250 },
+  { time: '10:20', requests: 500, latency: 130 },
+  { time: '10:25', requests: 420, latency: 110 },
+  { time: '10:30', requests: 480, latency: 115 },
+];
+
+const mockErrorData = [
+  { time: '10:00', error4xx: 12, error5xx: 0 },
+  { time: '10:05', error4xx: 15, error5xx: 2 },
+  { time: '10:10', error4xx: 25, error5xx: 5 },
+  { time: '10:15', error4xx: 40, error5xx: 15 },
+  { time: '10:20', error4xx: 18, error5xx: 1 },
+  { time: '10:25', error4xx: 14, error5xx: 0 },
+  { time: '10:30', error4xx: 10, error5xx: 0 },
+];
 
 const Dashboard: React.FC = () => {
   const { systemStatus, metrics } = useMonitoring();
+  const metricItems = [
+    { label: 'Estado Web', value: systemStatus.status.toUpperCase(), hint: 'tiempo real' },
+    { label: 'Uptime', value: `${systemStatus.uptime.toFixed(2)}%`, hint: 'ultimas 24h' },
+    { label: 'Latencia Avg', value: `${systemStatus.responseTime}ms`, hint: 'promedio' },
+    { label: 'Req/Sec', value: metrics.requestsPerSecond.toFixed(0), hint: 'actual' },
+    { label: 'Usuarios', value: String(metrics.activeUsers), hint: 'activos' },
+  ];
+
+  // Custom Tooltip para Recharts en estilo 8-bit
+  const CustomTooltip = ({ active, payload, label }: any) => {
+    if (active && payload && payload.length) {
+      return (
+        <div className="bg-monitoreo-card pixel-border p-3">
+          <p className="text-white font-mono mb-2">{`[ ${label} ]`}</p>
+          {payload.map((entry: any, index: number) => (
+            <p key={index} style={{ color: entry.color }} className="font-sans text-sm">
+              {entry.name.toUpperCase()}: {entry.value}
+            </p>
+          ))}
+        </div>
+      );
+    }
+    return null;
+  };
 
   return (
-    <div className="space-y-8">
-      {/* Encabezado */}
-      <div className="space-y-2">
-        <h1 className="text-4xl font-bold text-monitoreo-light">Dashboard</h1>
-        <p className="text-monitoreo-text-secondary">Estado del sistema en tiempo real</p>
-      </div>
+    <div className="mx-auto w-full max-w-7xl space-y-5">
+      <section className="space-y-2 border-b border-monitoreo-border pb-4">
+        <h1 className="text-3xl font-semibold tracking-wide text-monitoreo-light">DASHBOARD</h1>
+        <p className="text-sm text-monitoreo-text-secondary">Metricas y telemetria operativa en una sola vista.</p>
+      </section>
 
-      {/* Estado del Sistema - Tarjeta Principal */}
-      <Card className="lg:col-span-2">
-        <div className="flex items-center justify-between">
-          <div className="space-y-6">
-            <div>
-              <p className="text-sm text-monitoreo-text-secondary mb-2">Estado General</p>
-              <StatusBadge status={systemStatus.status} />
-            </div>
-            
-            <div className="grid grid-cols-3 gap-8">
-              <div>
-                <p className="text-sm text-monitoreo-text-secondary mb-2">Uptime</p>
-                <p className="text-2xl font-bold text-green-500">{systemStatus.uptime.toFixed(2)}%</p>
-              </div>
-              <div>
-                <p className="text-sm text-monitoreo-text-secondary mb-2">Tiempo de Respuesta</p>
-                <p className="text-2xl font-bold text-monitoreo-primary">{systemStatus.responseTime}ms</p>
-              </div>
-              <div>
-                <p className="text-sm text-monitoreo-text-secondary mb-2">Última Verificación</p>
-                <p className="text-sm text-monitoreo-light">{new Date(systemStatus.lastCheck).toLocaleTimeString('es-ES')}</p>
-              </div>
-            </div>
-          </div>
-
-          {/* Indicador Visual Grande */}
-          <div className="flex flex-col items-center">
-            <div className={`
-              w-32 h-32 rounded-full border-4 flex items-center justify-center
-              ${systemStatus.status === 'online' ? 'border-green-500 bg-green-500 bg-opacity-10' : ''}
-              ${systemStatus.status === 'degraded' ? 'border-yellow-500 bg-yellow-500 bg-opacity-10' : ''}
-              ${systemStatus.status === 'down' ? 'border-red-500 bg-red-500 bg-opacity-10' : ''}
-            `}>
-              <div className={`
-                w-24 h-24 rounded-full flex items-center justify-center
-                ${systemStatus.status === 'online' ? 'bg-green-500' : ''}
-                ${systemStatus.status === 'degraded' ? 'bg-yellow-500' : ''}
-                ${systemStatus.status === 'down' ? 'bg-red-500' : ''}
-              `}>
-                <span className="text-white text-4xl">
-                  {systemStatus.status === 'online' ? '✓' : systemStatus.status === 'degraded' ? '⚠' : '✗'}
-                </span>
-              </div>
+      <section className="grid grid-cols-1 gap-3 md:grid-cols-4">
+        <div className="border border-monitoreo-border p-4 md:col-span-2">
+          <p className="text-xs uppercase tracking-wide text-monitoreo-text-secondary">Estado General</p>
+          <div className="mt-3 flex items-center justify-between gap-4">
+            <p className="text-2xl font-semibold text-monitoreo-light">{systemStatus.status.toUpperCase()}</p>
+            <div className="text-right text-xs text-monitoreo-text-secondary">
+              <p>Uptime {systemStatus.uptime.toFixed(2)}%</p>
+              <p>Latencia {systemStatus.responseTime}ms</p>
             </div>
           </div>
         </div>
-      </Card>
-
-      {/* Métricas en Tiempo Real */}
-      <div className="space-y-4">
-        <h2 className="text-xl font-semibold text-monitoreo-light">Métricas en Tiempo Real</h2>
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-5 gap-4">
-          <MetricCard
-            label="Requests/seg"
-            value={metrics.requestsPerSecond.toFixed(0)}
-            color="primary"
-            trend="up"
-            trendPercent={2.5}
-            icon="📨"
-          />
-          <MetricCard
-            label="Usuarios Activos"
-            value={metrics.activeUsers}
-            color="success"
-            trend="stable"
-            trendPercent={0.5}
-            icon="👥"
-          />
-          <MetricCard
-            label="Tasa de Error"
-            value={metrics.errorRate.toFixed(2)}
-            unit="%"
-            color="warning"
-            trend="down"
-            trendPercent={0.3}
-            icon="⚠️"
-          />
-          <MetricCard
-            label="Latencia"
-            value={metrics.latencyMs.toFixed(0)}
-            unit="ms"
-            color="primary"
-            trend="stable"
-            trendPercent={0}
-            icon="⚡"
-          />
-          <MetricCard
-            label="Errores Recientes"
-            value={metrics.recentErrors}
-            color="danger"
-            trend="down"
-            trendPercent={1.2}
-            icon="❌"
-          />
+        <div className="border border-monitoreo-border p-4">
+          <p className="text-xs uppercase tracking-wide text-monitoreo-text-secondary">Errores Recientes</p>
+          <p className="mt-3 text-2xl font-semibold text-monitoreo-light">{metrics.recentErrors}</p>
         </div>
-      </div>
+        <div className="border border-monitoreo-border p-4">
+          <p className="text-xs uppercase tracking-wide text-monitoreo-text-secondary">Ultimo Check</p>
+          <p className="mt-3 text-2xl font-semibold text-monitoreo-light">
+            {new Date(systemStatus.lastCheck).toLocaleTimeString('es-ES')}
+          </p>
+        </div>
+      </section>
 
-      {/* Sección de Alertas */}
-      <div className="space-y-4">
-        <h2 className="text-xl font-semibold text-monitoreo-light">Alertas Activas</h2>
-        <Card>
-          <div className="space-y-3">
-            <div className="flex items-center justify-between p-4 bg-monitoreo-dark rounded-lg border-l-4 border-yellow-500">
-              <div>
-                <p className="font-semibold text-monitoreo-light">Tasa de error elevada</p>
-                <p className="text-sm text-monitoreo-text-secondary">Tasa de error superior al 0.5% en los últimos 5 minutos</p>
-              </div>
-              <Badge variant="warning">Activa</Badge>
-            </div>
+      <section className="grid grid-cols-1 gap-3 md:grid-cols-2 xl:grid-cols-5">
+        {metricItems.map((item) => (
+          <article key={item.label} className="flex min-h-[108px] flex-col justify-between border border-monitoreo-border p-4">
+            <p className="text-xs uppercase tracking-wide text-monitoreo-text-secondary">{item.label}</p>
+            <p className="text-3xl font-semibold leading-none text-monitoreo-light">{item.value}</p>
+            <p className="text-xs text-monitoreo-text-secondary">{item.hint}</p>
+          </article>
+        ))}
+      </section>
 
-            <div className="flex items-center justify-between p-4 bg-monitoreo-dark rounded-lg border-l-4 border-red-500">
-              <div>
-                <p className="font-semibold text-monitoreo-light">Múltiples intentos de login fallidos</p>
-                <p className="text-sm text-monitoreo-text-secondary">45 intentos fallidos desde IP 192.168.1.105</p>
-              </div>
-              <Badge variant="danger">Crítica</Badge>
-            </div>
-
-            <div className="flex items-center justify-between p-4 bg-monitoreo-dark rounded-lg border-l-4 border-yellow-500">
-              <div>
-                <p className="font-semibold text-monitoreo-light">Tráfico inusual detectado</p>
-                <p className="text-sm text-monitoreo-text-secondary">Incremento del 150% en requests comparado con el promedio horario</p>
-              </div>
-              <Badge variant="warning">Activa</Badge>
-            </div>
+      <section className="grid grid-cols-1 gap-5 xl:grid-cols-2">
+        <Card className="bg-transparent shadow-none">
+          <h3 className="mb-4 text-base font-semibold uppercase tracking-wide text-monitoreo-light">Trafico vs Latencia</h3>
+          <div className="h-[300px] w-full">
+            <ResponsiveContainer width="100%" height="100%">
+              <AreaChart data={mockTrafficData}>
+                <CartesianGrid strokeDasharray="3 3" stroke="#333" />
+                <XAxis dataKey="time" stroke="#AAA" tick={{fontFamily: 'VT323', fontSize: 16}} />
+                <YAxis yAxisId="left" stroke="#E5E5E5" tick={{fontFamily: 'VT323', fontSize: 16}} />
+                <YAxis yAxisId="right" orientation="right" stroke="#A3A3A3" tick={{fontFamily: 'VT323', fontSize: 16}} />
+                <Tooltip content={<CustomTooltip />} />
+                <Area yAxisId="left" type="step" dataKey="requests" name="Requests" stroke="#E5E5E5" fill="#E5E5E5" fillOpacity={0.2} strokeWidth={3} />
+                <Area yAxisId="right" type="step" dataKey="latency" name="Latencia (ms)" stroke="#A3A3A3" fillOpacity={0} strokeWidth={2} />
+              </AreaChart>
+            </ResponsiveContainer>
           </div>
         </Card>
-      </div>
 
-      {/* Tabla de Errores Recientes */}
-      <div className="space-y-4">
-        <h2 className="text-xl font-semibold text-monitoreo-light">Errores Recientes (4xx, 5xx)</h2>
-        <Card>
-          <div className="overflow-x-auto">
-            <table className="w-full text-sm">
+        <Card className="bg-transparent shadow-none">
+          <h3 className="mb-4 text-base font-semibold uppercase tracking-wide text-monitoreo-light">Incidencias 4xx / 5xx</h3>
+          <div className="h-[300px] w-full">
+            <ResponsiveContainer width="100%" height="100%">
+              <BarChart data={mockErrorData}>
+                <CartesianGrid strokeDasharray="3 3" stroke="#333" />
+                <XAxis dataKey="time" stroke="#AAA" tick={{fontFamily: 'VT323', fontSize: 16}} />
+                <YAxis stroke="#AAA" tick={{fontFamily: 'VT323', fontSize: 16}} />
+                <Tooltip content={<CustomTooltip />} />
+                <Bar dataKey="error4xx" name="Errores 4XX" stackId="a" fill="#D4D4D4" />
+                <Bar dataKey="error5xx" name="Errores 5XX" stackId="a" fill="#737373" />
+              </BarChart>
+            </ResponsiveContainer>
+          </div>
+        </Card>
+      </section>
+
+      <section className="grid grid-cols-1 gap-5 xl:grid-cols-2">
+        <Card className="bg-transparent shadow-none">
+          <h3 className="mb-4 text-base font-semibold uppercase tracking-wide text-monitoreo-light">Requests Recientes</h3>
+          <div className="overflow-x-auto scrollbar-hide">
+            <table className="w-full text-sm font-sans">
               <thead>
-                <tr className="border-b border-monitoreo-border">
-                  <th className="text-left py-3 px-4 text-monitoreo-text-secondary font-semibold">Código</th>
-                  <th className="text-left py-3 px-4 text-monitoreo-text-secondary font-semibold">Endpoint</th>
-                  <th className="text-left py-3 px-4 text-monitoreo-text-secondary font-semibold">Método</th>
-                  <th className="text-left py-3 px-4 text-monitoreo-text-secondary font-semibold">Ocurrencias</th>
-                  <th className="text-left py-3 px-4 text-monitoreo-text-secondary font-semibold">Último</th>
+                <tr className="border-b border-monitoreo-border text-monitoreo-secondary">
+                  <th className="py-2 text-left font-normal">METODO</th>
+                  <th className="py-2 text-left font-normal">RUTA</th>
+                  <th className="py-2 text-left font-normal">CODIGO</th>
+                  <th className="py-2 text-left font-normal">TIEMPO</th>
                 </tr>
               </thead>
               <tbody>
-                <tr className="border-b border-monitoreo-border hover:bg-monitoreo-card transition-colors">
-                  <td className="py-3 px-4"><Badge variant="danger">500</Badge></td>
-                  <td className="py-3 px-4 text-monitoreo-light">/api/usuarios/crear</td>
-                  <td className="py-3 px-4 text-monitoreo-light">POST</td>
-                  <td className="py-3 px-4">12</td>
-                  <td className="py-3 px-4 text-monitoreo-text-secondary">hace 2 minutos</td>
+                <tr className="border-b border-monitoreo-dark hover:bg-monitoreo-darker transition-colors">
+                  <td className="py-2 text-monitoreo-light font-bold">GET</td>
+                  <td className="py-2 text-white">/api/v1/users</td>
+                  <td className="py-2"><span className="text-monitoreo-light">200</span></td>
+                  <td className="py-2 text-monitoreo-secondary">45ms</td>
                 </tr>
-                <tr className="border-b border-monitoreo-border hover:bg-monitoreo-card transition-colors">
-                  <td className="py-3 px-4"><Badge variant="warning">404</Badge></td>
-                  <td className="py-3 px-4 text-monitoreo-light">/api/reporte/descargar</td>
-                  <td className="py-3 px-4 text-monitoreo-light">GET</td>
-                  <td className="py-3 px-4">8</td>
-                  <td className="py-3 px-4 text-monitoreo-text-secondary">hace 5 minutos</td>
+                <tr className="border-b border-monitoreo-dark hover:bg-monitoreo-darker transition-colors">
+                  <td className="py-2 text-monitoreo-light font-bold">POST</td>
+                  <td className="py-2 text-white">/api/v1/auth/login</td>
+                  <td className="py-2"><span className="text-monitoreo-light">201</span></td>
+                  <td className="py-2 text-monitoreo-secondary">120ms</td>
                 </tr>
-                <tr className="border-b border-monitoreo-border hover:bg-monitoreo-card transition-colors">
-                  <td className="py-3 px-4"><Badge variant="warning">403</Badge></td>
-                  <td className="py-3 px-4 text-monitoreo-light">/admin/settings</td>
-                  <td className="py-3 px-4 text-monitoreo-light">GET</td>
-                  <td className="py-3 px-4">3</td>
-                  <td className="py-3 px-4 text-monitoreo-text-secondary">hace 8 minutos</td>
+                <tr className="border-b border-monitoreo-dark hover:bg-monitoreo-darker transition-colors">
+                  <td className="py-2 text-monitoreo-light font-bold">DELETE</td>
+                  <td className="py-2 text-white">/api/v1/data/1029</td>
+                  <td className="py-2"><span className="text-monitoreo-secondary">403</span></td>
+                  <td className="py-2 text-monitoreo-secondary">32ms</td>
+                </tr>
+                <tr className="border-b border-monitoreo-dark hover:bg-monitoreo-darker transition-colors">
+                  <td className="py-2 text-monitoreo-light font-bold">GET</td>
+                  <td className="py-2 text-white">/api/v1/reports</td>
+                  <td className="py-2"><span className="text-monitoreo-secondary">500</span></td>
+                  <td className="py-2 text-monitoreo-secondary">2500ms</td>
                 </tr>
               </tbody>
             </table>
           </div>
         </Card>
-      </div>
 
-      {/* Endpoints Más Usados */}
-      <div className="space-y-4">
-        <h2 className="text-xl font-semibold text-monitoreo-light">Endpoints Más Usados</h2>
-        <Card>
-          <div className="space-y-4">
-            {[
-              { endpoint: '/api/datos/obtener', usage: 5420, avgTime: 45, status: 'online' },
-              { endpoint: '/api/usuarios/lista', usage: 3210, avgTime: 62, status: 'online' },
-              { endpoint: '/api/reporte/generar', usage: 1854, avgTime: 234, status: 'degraded' },
-              { endpoint: '/api/auth/login', usage: 892, avgTime: 78, status: 'online' },
-            ].map((endpoint, idx) => (
-              <div key={idx} className="flex items-center justify-between p-3 bg-monitoreo-dark rounded-lg border border-monitoreo-border hover:border-monitoreo-primary transition-colors">
-                <div className="flex-1">
-                  <p className="font-semibold text-monitoreo-light">{endpoint.endpoint}</p>
-                  <div className="flex gap-4 mt-2 text-sm text-monitoreo-text-secondary">
-                    <span>Requests: {endpoint.usage}</span>
-                    <span>Tiempo promedio: {endpoint.avgTime}ms</span>
-                  </div>
-                </div>
-                <div className="flex items-center gap-2">
-                  <div className={`w-2 h-2 rounded-full ${endpoint.status === 'online' ? 'bg-green-500' : 'bg-yellow-500'}`} />
-                  <Badge variant={endpoint.status === 'online' ? 'success' : 'warning'}>
-                    {endpoint.status === 'online' ? 'Óptimo' : 'Lento'}
-                  </Badge>
-                </div>
+        <Card className="bg-transparent shadow-none">
+          <h3 className="mb-4 text-base font-semibold uppercase tracking-wide text-monitoreo-light">Eventos y Alertas</h3>
+          <div className="space-y-3">
+            <div className="flex items-start gap-3 border border-monitoreo-border p-3">
+              <div className="mt-1 text-monitoreo-light">[]</div>
+              <div>
+                <p className="text-monitoreo-light font-bold font-sans">Caida Masiva en /api/v1/reports</p>
+                <p className="text-monitoreo-secondary text-xs mt-1">Hace 2 minutos • 45 errores 5xx detectados originados por Timeout en DB.</p>
               </div>
-            ))}
+            </div>
+            <div className="flex items-start gap-3 border border-monitoreo-border p-3">
+              <div className="mt-1 text-monitoreo-light">[]</div>
+              <div>
+                <p className="text-monitoreo-light font-bold font-sans">Pico de Trafico Inusual</p>
+                <p className="text-monitoreo-secondary text-xs mt-1">Hace 15 minutos • Incremento del 200% superando límite base.</p>
+              </div>
+            </div>
+            <div className="flex items-start gap-3 border border-monitoreo-border p-3">
+              <div className="mt-1 text-monitoreo-light">[]</div>
+              <div>
+                <p className="text-monitoreo-light font-bold font-sans">Nuevo despliegue detectado</p>
+                <p className="text-monitoreo-secondary text-xs mt-1">Hace 1 hora • Versión v2.1.0 online. Caché purgada.</p>
+              </div>
+            </div>
           </div>
         </Card>
-      </div>
+      </section>
     </div>
   );
 };

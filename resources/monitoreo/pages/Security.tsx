@@ -4,87 +4,87 @@ import { Badge } from '@monitoreo/components/ui/Badge';
 import { Button } from '@monitoreo/components/ui/Button';
 
 const Security: React.FC = () => {
+  const overview = [
+    { label: 'IPs Sospechosas', value: '8', hint: '3 bloqueadas / 5 vigiladas' },
+    { label: 'Brute Force', value: '24', hint: 'eventos en 24h' },
+    { label: 'Patrones Anomalos', value: '12', hint: 'en investigacion' },
+    { label: 'Score Seguridad', value: '87/100', hint: 'estabilidad actual' },
+  ];
+
+  const suspiciousIps = [
+    { ip: '192.168.1.105', attempts: 45, risk: 'Alto', location: 'Desconocida' },
+    { ip: '203.0.113.45', attempts: 23, risk: 'Medio', location: 'CN' },
+    { ip: '198.51.100.12', attempts: 18, risk: 'Bajo', location: 'RU' },
+  ];
+
+  const bruteForce = [
+    { endpoint: '/auth/login', attempts: 45, status: 'Bloqueado' },
+    { endpoint: '/admin/login', attempts: 23, status: 'Monitoreado' },
+    { endpoint: '/api/auth/token', attempts: 12, status: 'Monitoreado' },
+  ];
+
+  const anomalies = [
+    {
+      pattern: 'Trafico inusual desde maquina local',
+      description: 'Incremento del 250% en requests comparado con el promedio.',
+      severity: 'Medio',
+      timestamp: new Date(Date.now() - 600000).toLocaleTimeString('es-ES'),
+    },
+    {
+      pattern: 'Multiples accesos a recursos sensibles',
+      description: 'Usuario admin accediendo a archivos de configuracion.',
+      severity: 'Alto',
+      timestamp: new Date(Date.now() - 1800000).toLocaleTimeString('es-ES'),
+    },
+    {
+      pattern: 'Cambios en patrones de acceso',
+      description: 'Usuario nocturno accediendo en horario diurno.',
+      severity: 'Bajo',
+      timestamp: new Date(Date.now() - 3600000).toLocaleTimeString('es-ES'),
+    },
+  ];
+
   return (
-    <div className="space-y-8">
-      {/* Encabezado */}
-      <div className="space-y-2">
-        <h1 className="text-4xl font-bold text-monitoreo-light">Seguridad</h1>
-        <p className="text-monitoreo-text-secondary">Monitoreo de alertas de seguridad y patrones anómalos</p>
-      </div>
+    <div className="mx-auto w-full max-w-7xl space-y-5">
+      <section className="space-y-2 border-b border-monitoreo-border pb-4">
+        <h1 className="text-3xl font-semibold tracking-wide text-monitoreo-light">SEGURIDAD</h1>
+        <p className="text-sm text-monitoreo-text-secondary">Control de riesgo, intentos de acceso y patrones anormales.</p>
+      </section>
 
-      {/* Resumen de Seguridad */}
-      <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
-        <Card>
-          <div className="space-y-4">
-            <p className="text-sm text-monitoreo-text-secondary">IPs Sospechosas</p>
-            <p className="text-3xl font-bold text-orange-500">8</p>
-            <div className="flex gap-2">
-              <Badge variant="danger">3 Bloqueadas</Badge>
-              <Badge variant="warning">5 Vigiladas</Badge>
-            </div>
-          </div>
-        </Card>
+      <section className="grid grid-cols-1 gap-3 md:grid-cols-4">
+        {overview.map((item) => (
+          <article key={item.label} className="flex min-h-[108px] flex-col justify-between border border-monitoreo-border p-4">
+            <p className="text-xs uppercase tracking-wide text-monitoreo-text-secondary">{item.label}</p>
+            <p className="text-3xl font-semibold leading-none text-monitoreo-light">{item.value}</p>
+            <p className="text-xs text-monitoreo-text-secondary">{item.hint}</p>
+          </article>
+        ))}
+      </section>
 
-        <Card>
-          <div className="space-y-4">
-            <p className="text-sm text-monitoreo-text-secondary">Intentos Brute Force</p>
-            <p className="text-3xl font-bold text-red-500">24</p>
-            <div className="flex gap-2">
-              <Badge variant="danger">Detectados hoy</Badge>
-            </div>
-          </div>
-        </Card>
-
-        <Card>
-          <div className="space-y-4">
-            <p className="text-sm text-monitoreo-text-secondary">Patrones Anómalos</p>
-            <p className="text-3xl font-bold text-yellow-500">12</p>
-            <div className="flex gap-2">
-              <Badge variant="warning">En investigación</Badge>
-            </div>
-          </div>
-        </Card>
-
-        <Card>
-          <div className="space-y-4">
-            <p className="text-sm text-monitoreo-text-secondary">Score de Seguridad</p>
-            <p className="text-3xl font-bold text-green-500">87/100</p>
-            <div className="w-full bg-monitoreo-dark rounded-full h-2">
-              <div className="bg-green-500 h-2 rounded-full" style={{ width: '87%' }} />
-            </div>
-          </div>
-        </Card>
-      </div>
-
-      {/* IPs Sospechosas */}
-      <Card title="IPs Sospechosas Detectadas">
+      <Card className="bg-transparent shadow-none" title="IPs Sospechosas Detectadas" subtitle="Origenes con actividad potencialmente maliciosa.">
         <div className="overflow-x-auto">
           <table className="w-full text-sm">
             <thead>
               <tr className="border-b border-monitoreo-border">
-                <th className="text-left py-3 px-4 text-monitoreo-text-secondary font-semibold">IP</th>
-                <th className="text-left py-3 px-4 text-monitoreo-text-secondary font-semibold">Intentos Fallidos</th>
-                <th className="text-left py-3 px-4 text-monitoreo-text-secondary font-semibold">Riesgo</th>
-                <th className="text-left py-3 px-4 text-monitoreo-text-secondary font-semibold">Ubicación</th>
-                <th className="text-left py-3 px-4 text-monitoreo-text-secondary font-semibold">Acción</th>
+                <th className="px-3 py-3 text-left font-medium text-monitoreo-text-secondary">IP</th>
+                <th className="px-3 py-3 text-left font-medium text-monitoreo-text-secondary">Intentos</th>
+                <th className="px-3 py-3 text-left font-medium text-monitoreo-text-secondary">Riesgo</th>
+                <th className="px-3 py-3 text-left font-medium text-monitoreo-text-secondary">Ubicacion</th>
+                <th className="px-3 py-3 text-left font-medium text-monitoreo-text-secondary">Accion</th>
               </tr>
             </thead>
             <tbody>
-              {[
-                { ip: '192.168.1.105', attempts: 45, risk: 'Alto', location: 'Desconocida' },
-                { ip: '203.0.113.45', attempts: 23, risk: 'Medio', location: 'CN' },
-                { ip: '198.51.100.12', attempts: 18, risk: 'Bajo', location: 'RU' },
-              ].map((item, idx) => (
-                <tr key={idx} className="border-b border-monitoreo-border hover:bg-monitoreo-card transition-colors">
-                  <td className="py-3 px-4 text-monitoreo-light font-mono">{item.ip}</td>
-                  <td className="py-3 px-4">{item.attempts}</td>
-                  <td className="py-3 px-4">
+              {suspiciousIps.map((item, idx) => (
+                <tr key={idx} className="border-b border-monitoreo-border align-middle hover:bg-monitoreo-darker transition-colors">
+                  <td className="px-3 py-3 font-mono text-monitoreo-light">{item.ip}</td>
+                  <td className="px-3 py-3 text-monitoreo-light">{item.attempts}</td>
+                  <td className="px-3 py-3">
                     <Badge variant={item.risk === 'Alto' ? 'danger' : item.risk === 'Medio' ? 'warning' : 'success'}>
                       {item.risk}
                     </Badge>
                   </td>
-                  <td className="py-3 px-4 text-monitoreo-text-secondary">{item.location}</td>
-                  <td className="py-3 px-4">
+                  <td className="px-3 py-3 text-monitoreo-text-secondary">{item.location}</td>
+                  <td className="px-3 py-3">
                     <Button size="sm" variant="danger">Bloquear</Button>
                   </td>
                 </tr>
@@ -94,65 +94,38 @@ const Security: React.FC = () => {
         </div>
       </Card>
 
-      {/* Intentos Brute Force */}
-      <Card title="Intentos de Fuerza Bruta">
-        <div className="space-y-3">
-          {[
-            { endpoint: '/auth/login', attempts: 45, status: 'Bloqueado' },
-            { endpoint: '/admin/login', attempts: 23, status: 'Monitoreado' },
-            { endpoint: '/api/auth/token', attempts: 12, status: 'Monitoreado' },
-          ].map((item, idx) => (
-            <div key={idx} className="flex items-center justify-between p-4 bg-monitoreo-dark rounded-lg border border-monitoreo-border">
-              <div>
-                <p className="font-semibold text-monitoreo-light">{item.endpoint}</p>
-                <p className="text-sm text-monitoreo-text-secondary">{item.attempts} intentos en las últimas 24h</p>
-              </div>
-              <Badge variant={item.status === 'Bloqueado' ? 'danger' : 'warning'}>
-                {item.status}
-              </Badge>
-            </div>
-          ))}
-        </div>
-      </Card>
-
-      {/* Patrones Anómalos */}
-      <Card title="Patrones Anómalos Detectados">
-        <div className="space-y-3">
-          {[
-            {
-              pattern: 'Tráfico inusual desde máquina local',
-              description: 'Incremento del 250% en requests comparado con el promedio',
-              severity: 'Medio',
-              timestamp: new Date(Date.now() - 600000).toLocaleTimeString('es-ES'),
-            },
-            {
-              pattern: 'Múltiples accesos a recursos sensibles',
-              description: 'Usuario admin accediendo a archivos de configuración',
-              severity: 'Alto',
-              timestamp: new Date(Date.now() - 1800000).toLocaleTimeString('es-ES'),
-            },
-            {
-              pattern: 'Cambios en patrones de acceso',
-              description: 'Usuario típicamente nocturno accediendo a horas diurnas',
-              severity: 'Bajo',
-              timestamp: new Date(Date.now() - 3600000).toLocaleTimeString('es-ES'),
-            },
-          ].map((item, idx) => (
-            <div key={idx} className="p-4 bg-monitoreo-dark rounded-lg border-l-4 border-yellow-500">
-              <div className="flex justify-between items-start mb-2">
+      <section className="grid grid-cols-1 gap-5 xl:grid-cols-2">
+        <Card className="bg-transparent shadow-none" title="Intentos de Fuerza Bruta" subtitle="Ataques repetitivos sobre endpoints de autenticacion.">
+          <div className="space-y-3">
+            {bruteForce.map((item, idx) => (
+              <div key={idx} className="grid grid-cols-[1fr_auto] items-center gap-3 border border-monitoreo-border p-3">
                 <div>
-                  <p className="font-semibold text-monitoreo-light">{item.pattern}</p>
-                  <p className="text-sm text-monitoreo-text-secondary mt-1">{item.description}</p>
+                  <p className="text-sm font-semibold text-monitoreo-light">{item.endpoint}</p>
+                  <p className="text-xs text-monitoreo-text-secondary">{item.attempts} intentos en las ultimas 24h</p>
                 </div>
-                <Badge variant={item.severity === 'Alto' ? 'danger' : item.severity === 'Medio' ? 'warning' : 'success'}>
-                  {item.severity}
-                </Badge>
+                <Badge variant={item.status === 'Bloqueado' ? 'danger' : 'warning'}>{item.status}</Badge>
               </div>
-              <p className="text-xs text-monitoreo-text-secondary">{item.timestamp}</p>
-            </div>
-          ))}
-        </div>
-      </Card>
+            ))}
+          </div>
+        </Card>
+
+        <Card className="bg-transparent shadow-none" title="Patrones Anomalos Detectados" subtitle="Eventos de comportamiento fuera de la linea base.">
+          <div className="space-y-3">
+            {anomalies.map((item, idx) => (
+              <div key={idx} className="border border-monitoreo-border p-3">
+                <div className="mb-2 flex items-start justify-between gap-3">
+                  <p className="text-sm font-semibold text-monitoreo-light">{item.pattern}</p>
+                  <Badge variant={item.severity === 'Alto' ? 'danger' : item.severity === 'Medio' ? 'warning' : 'success'}>
+                    {item.severity}
+                  </Badge>
+                </div>
+                <p className="text-sm text-monitoreo-text-secondary">{item.description}</p>
+                <p className="mt-2 text-xs text-monitoreo-text-secondary">{item.timestamp}</p>
+              </div>
+            ))}
+          </div>
+        </Card>
+      </section>
     </div>
   );
 };

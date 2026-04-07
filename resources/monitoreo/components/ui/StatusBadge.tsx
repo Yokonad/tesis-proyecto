@@ -2,36 +2,25 @@ import React from 'react';
 
 interface StatusBadgeProps {
   status: 'online' | 'degraded' | 'down';
-  className?: string;
 }
 
-const statusConfig = {
-  online: {
-    color: 'bg-green-500',
-    text: 'Online',
-    dotClass: 'animate-pulse-slow',
-  },
-  degraded: {
-    color: 'bg-yellow-500',
-    text: 'Degradado',
-    dotClass: 'animate-pulse',
-  },
-  down: {
-    color: 'bg-red-500',
-    text: 'Caído',
-    dotClass: 'animate-pulse-fast',
-  },
-};
+export const StatusBadge: React.FC<StatusBadgeProps> = ({ status }) => {
+  const styles = {
+    online: 'text-monitoreo-light pixel-border bg-transparent',
+    degraded: 'text-monitoreo-light pixel-border bg-transparent',
+    down: 'text-monitoreo-light pixel-border bg-transparent animate-pulse'
+  };
 
-export const StatusBadge: React.FC<StatusBadgeProps> = ({ status, className = '' }) => {
-  const config = statusConfig[status];
+  const labels = {
+    online: 'SISTEMA OPERATIVO',
+    degraded: 'RENDIMIENTO DEGRADADO',
+    down: 'CAÍDA DETECTADA'
+  };
 
   return (
-    <div className={`flex items-center gap-2 ${className}`}>
-      <div className={`w-3 h-3 rounded-full ${config.color} ${config.dotClass}`} />
-      <span className="text-sm font-medium text-monitoreo-light">
-        {config.text}
-      </span>
+    <div className={`inline-flex items-center px-3 py-1 font-mono text-sm tracking-widest font-bold ${styles[status]}`}>
+      <span className="mr-2">□</span>
+      {labels[status]}
     </div>
   );
 };

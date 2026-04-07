@@ -13,19 +13,19 @@ export const Button: React.FC<ButtonProps> = ({
   children,
   ...props
 }) => {
-  const baseStyles = 'font-medium transition-colors duration-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-offset-2';
+  const baseStyles = 'font-mono transition-colors duration-200 focus:outline-none flex items-center border hover:bg-monitoreo-border hover:bg-opacity-20';
   
   const variantStyles = {
-    primary: 'bg-monitoreo-primary text-monitoreo-dark hover:bg-monitoreo-primary-light focus:ring-monitoreo-primary',
-    secondary: 'bg-monitoreo-secondary text-monitoreo-light hover:bg-monitoreo-secondary-dark focus:ring-monitoreo-secondary',
-    danger: 'bg-monitoreo-danger text-white hover:bg-red-600 focus:ring-red-500',
-    ghost: 'bg-transparent text-monitoreo-primary hover:bg-monitoreo-primary hover:bg-opacity-10 focus:ring-monitoreo-primary',
+    primary: 'border-monitoreo-border text-monitoreo-light',
+    secondary: 'border-transparent text-monitoreo-text-secondary hover:text-monitoreo-light',
+    danger: 'border-monitoreo-light text-monitoreo-light hover:border-monitoreo-light hover:text-monitoreo-light',
+    ghost: 'border-transparent text-monitoreo-light hover:border-monitoreo-light',
   };
 
   const sizeStyles = {
-    sm: 'px-3 py-1.5 text-sm',
-    md: 'px-4 py-2 text-base',
-    lg: 'px-6 py-3 text-lg',
+    sm: 'px-3 py-1.5 text-xs',
+    md: 'px-4 py-2 text-sm',
+    lg: 'px-6 py-3 text-base',
   };
 
   return (
@@ -33,6 +33,7 @@ export const Button: React.FC<ButtonProps> = ({
       className={`${baseStyles} ${variantStyles[variant]} ${sizeStyles[size]} ${className}`}
       {...props}
     >
+      <span className="text-monitoreo-text-secondary mr-2">$</span>
       {children}
     </button>
   );
