@@ -39,3 +39,15 @@ declare module '*.gif' {
   const content: string;
   export default content;
 }
+
+// ============================================
+// Tipos Global para Monitoreo
+// ============================================
+
+interface Window {
+  monitoreo?: {
+    apiBase?: string;
+    ws?: WebSocket;
+  };
+}
+
